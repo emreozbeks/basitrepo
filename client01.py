@@ -1,25 +1,19 @@
 #!/usr/bin/env python
 
-# WS server example
+# WS client example
 
 import asyncio
 import websockets
 
-async def hello(websocket, path):
-    name = await websocket.recv()
-    print(f"< {name}")
-    if ("ali" in name):
-        greeting = f"Ali: {name}!"
-    elif ("veli" in name):
-        greeting = f"Veli: {name}!"
-    else:
-        greeting = f"Diger: {name}!"
-    
+async def hello():
+    uri = "ws://localhost:8765"
+    async with websockets.connect(uri) as websocket:
+        name = input("What's your name? ")
 
-    await websocket.send(greeting)
-    print(f"> {greeting}")
+        await websocket.send(name)
+        print(f"> {name}")
 
-start_server = websockets.serve(hello, "localhost", 8765)
+        greeting = await websocket.recv()
+        print(f"< {greeting}")
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+asyncio.get_event_loop().run_until_complete(hello())
